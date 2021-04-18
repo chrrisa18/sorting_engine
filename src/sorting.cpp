@@ -144,6 +144,7 @@ void SortingEngine:: QuickSort(int left, int right)
 	return;
 }
 
+//log(nlogn) complexity
 void SortingEngine:: MergeSort(int low, int high)
 {
 	if(low < high){
@@ -156,29 +157,37 @@ void SortingEngine:: MergeSort(int low, int high)
 }
 
 void SortingEngine:: Merge(int low, int high, int mid)
-{
-	int i = low;
-	int j = mid + 1; 
-	int k = 0;
-	int* tempArray = (int*)malloc(mid * sizeof(int));
- 
-	while(i <= mid && j <= high) {
-		if(this->array[i] <= this->array[j]) {
-			tempArray[k] = this->array[i];
-			i++;
-			k++;
-		}
-		else {
-			tempArray[k] = this->array[j];
-			j++;
-			k++;
-		}
-		
+{	
+	int size1 = mid - low + 1, size2 = high - mid, size3 = high - low + 1;
+	int list1[size1], list2[size2], list3[size3];
 
+	for(int i = 0; i < size1; ++i) 
+		list1[i] = this->array[i + low];
+
+	for(int i = 0; i < size2; ++i) 
+		list2[i] = this->array[i + mid + 1];
+
+	int ptr1 = 0, ptr2 = 0, ptr3 = 0;
+
+	while(ptr1 < size1 && ptr2 < size2) {
 		
+		if(list1[ptr1] < list2[ptr2])
+			list3[ptr3] = list1[ptr1++];
+		else
+			list3[ptr3] = list2[ptr2++];
+		ptr3++;
 	}
 
-	free(tempArray);
+	while(ptr1 < size1) 
+		list3[ptr3++] = list1[ptr1++];
+		
+	while(ptr2 < size2)
+		list3[ptr3++] = list2[ptr2++];
+	
+	for(int index = 0; index < size3; index++) 
+		this->array[index + low] = list3[index];
+
+	return;
 }
 
 //all cases O(n^2)
@@ -190,7 +199,8 @@ void SortingEngine:: SelectionSort()
 		for(auto j = i + 1; j < SIZE; ++j)
 			if(this->array[j] < this->array[min_index])
 				min_index = j;
-		(min_index == i) ? 1 : Swap(&(this->array[i]), &(this->array[min_index]));
+		if(min_index != i) 
+			Swap(&(this->array[i]), &(this->array[min_index]));
 	}
 	return;
 }
